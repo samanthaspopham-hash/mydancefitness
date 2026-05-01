@@ -394,31 +394,33 @@ body.dark .mode-lbl.on, body.light .mode-lbl.on { color: #fd7b77; }
   line-height: 1.5;
 }
 
-/* ─── NAV MORE BUTTON (three-dot) ─── */
-.nav-more {
-  position: absolute;
-  right: 14px;
-  bottom: 50%;
-  transform: translateY(50%);
-  width: 28px;
-  height: 28px;
+/* ─── HEADER SETTINGS GEAR (top-right of header) ─── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-settings {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  background: transparent;
+  border: 0.5px solid var(--accent-border);
+  border-radius: 50%;
   color: var(--text-muted);
   cursor: pointer;
-  border-radius: 50%;
-  transition: background 0.15s, color 0.15s;
-  user-select: none;
-  font-weight: 700;
-  letter-spacing: -1px;
+  padding: 0;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.4s;
 }
-.nav-more:hover, .nav-more:active {
-  background: var(--accent-bg);
+.header-settings:hover, .header-settings:active {
   color: #fd7b77;
+  border-color: #fd7b77;
+  background: var(--accent-bg);
+  transform: rotate(45deg);
 }
-.nav { position: relative; }
+.header-settings svg { display: block; }
 
 .toggle-track {
   width: 48px; height: 26px; border-radius: 13px;
@@ -510,6 +512,52 @@ body.light .toggle-thumb { left: 23px; }
 .log-info { flex: 1; min-width: 0; }
 .log-title { font-size: 13px; font-weight: 500; color: var(--text-primary); transition: color 0.3s; }
 .log-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; transition: color 0.3s; }
+.miles-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: var(--accent-bg);
+  border: 0.5px solid var(--accent-border);
+  color: #fd7b77;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  font-weight: 500;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Miles line — tucked under the stat grid on home, period-aware */
+.miles-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--accent-bg);
+  border: 0.5px solid var(--accent-border);
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+}
+.miles-line-icon { font-size: 14px; line-height: 1; }
+.miles-line-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.miles-line-value {
+  margin-left: auto;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  color: #fd7b77;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
 .log-delete { color: var(--text-dim); cursor: pointer; padding: 4px 6px; transition: color 0.2s; display: inline-flex; align-items: center; }
 .log-delete .icon { width: 14px; height: 14px; }
 .log-delete:hover { color: #fd7b77; }
@@ -1369,7 +1417,15 @@ body.light .toggle-thumb { left: 23px; }
   <div class="header">
     <div class="header-top">
       <div class="brand"><span class="brand-my">My</span><span class="brand-dance">Dance</span><span class="brand-fitness">Fitness</span></div>
-      <div class="pill" id="header-pill"><span id="header-pill-icon"></span><span id="today-label">Today</span></div>
+      <div class="header-actions">
+        <div class="pill" id="header-pill"><span id="header-pill-icon"></span><span id="today-label">Today</span></div>
+        <button class="header-settings" onclick="openSettings()" aria-label="Settings" title="Settings">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="greeting-row">
       <div class="g-tag" id="g-tag-line">Today's check-in</div>
@@ -1466,6 +1522,12 @@ body.light .toggle-thumb { left: 23px; }
             <div class="stat-val" id="stat-splurge">0</div>
             <div class="stat-sub" id="stat-splurge-cmp">splurges + eating out</div>
           </div>
+        </div>
+        <!-- Miles line — quietly tucked under the stat grid; only shows if there are miles -->
+        <div class="miles-line" id="miles-line" style="display:none;">
+          <span class="miles-line-icon">🏃</span>
+          <span class="miles-line-label">Miles</span>
+          <span class="miles-line-value" id="miles-line-value">0</span>
         </div>
       </div>
 
@@ -1590,7 +1652,6 @@ body.light .toggle-thumb { left: 23px; }
     <div class="nav-item" id="nav-log" onclick="gotoPage('log')"><div class="nav-icon" data-icon="log"></div><div class="nav-label">log</div></div>
     <div class="nav-item" id="nav-treats" onclick="gotoPage('treats')"><div class="nav-icon" data-icon="treats"></div><div class="nav-label">treats</div></div>
     <div class="nav-item" id="nav-calendar" onclick="gotoPage('calendar')"><div class="nav-icon" data-icon="calendar"></div><div class="nav-label">calendar</div></div>
-    <div class="nav-more" id="nav-more" onclick="openSettings()" title="Settings">⋮</div>
   </div>
 
 </div>
@@ -1624,6 +1685,11 @@ body.light .toggle-thumb { left: 23px; }
           <label class="form-label">End time</label>
           <input class="form-input" id="log-end" type="time" />
         </div>
+      </div>
+      <!-- Miles field: only appears for runs (or any tag with "run" in it) -->
+      <div class="form-group" id="log-miles-group" style="display:none;">
+        <label class="form-label">Distance (miles) <span style="opacity:0.55;font-weight:400;">— optional</span></label>
+        <input class="form-input" id="log-miles" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 3.2" />
       </div>
       <div class="form-group" id="log-completed-group">
         <label class="completed-toggle">
@@ -2647,6 +2713,18 @@ function renderHome() {
         : splurgeLast === 0 ? 'first one in ' + range.unit
         : (splurge > splurgeLast ? '+' : '') + (splurge - splurgeLast) + ' ' + cmpSuffix);
 
+  // Miles total for the current period — only show the line if there are any
+  const milesTotal = thisDone.reduce((sum, e) => sum + (e.miles || 0), 0);
+  const milesLine = document.getElementById('miles-line');
+  if (milesLine) {
+    if (milesTotal > 0) {
+      milesLine.style.display = '';
+      document.getElementById('miles-line-value').textContent = formatMiles(milesTotal) + ' mi';
+    } else {
+      milesLine.style.display = 'none';
+    }
+  }
+
   // Highlight
   const highlight = pickHighlight(thisDone, prevDone, dance, danceLast, splurge, range);
   const hCard = document.getElementById('highlight-card');
@@ -2686,6 +2764,7 @@ function renderHome() {
       }
       const meta = TYPE_META[it.type] || TYPE_META.other;
       const timeStr = it.startTime ? `${fmtTime(it.startTime)}–${fmtTime(it.endTime)}` : '';
+      const milesBadge = it.miles ? `<span class="miles-badge">🏃 ${formatMiles(it.miles)} mi</span>` : '';
       const statusBadge = it.completed
         ? `<span class="entry-check" title="Completed">${icon('check')}</span>`
         : `<span class="entry-pending" title="Scheduled"></span>`;
@@ -2693,7 +2772,7 @@ function renderHome() {
         <div class="log-icon">${icon(meta.icon)}</div>
         <div class="log-info">
           <div class="log-title">${escapeHtml(it.name)}</div>
-          <div class="log-meta">${timeStr || (it.completed ? 'logged' : 'scheduled')}</div>
+          <div class="log-meta">${timeStr || (it.completed ? 'logged' : 'scheduled')}${milesBadge}</div>
         </div>
         ${statusBadge}
         <span class="log-delete" onclick="deleteEntry('${it.id}')">${icon('trash')}</span>
@@ -2740,6 +2819,7 @@ function renderAllSessions() {
   wrap.innerHTML = sorted.map(en => {
     const meta = TYPE_META[en.type] || TYPE_META.other;
     const timeStr = en.startTime ? ` · ${fmtTime(en.startTime)}–${fmtTime(en.endTime)}` : '';
+    const milesBadge = en.miles ? `<span class="miles-badge">🏃 ${formatMiles(en.miles)} mi</span>` : '';
     const statusBadge = en.completed
       ? `<span class="entry-check" title="Completed" onclick="toggleCompleted('${en.id}')">${icon('check')}</span>`
       : `<span class="entry-pending" title="Tap to mark completed" onclick="toggleCompleted('${en.id}')"></span>`;
@@ -2747,7 +2827,7 @@ function renderAllSessions() {
       <div class="log-icon">${icon(meta.icon)}</div>
       <div class="log-info">
         <div class="log-title">${escapeHtml(en.name)}</div>
-        <div class="log-meta">${relativeDate(en.date)}${timeStr}</div>
+        <div class="log-meta">${relativeDate(en.date)}${timeStr}${milesBadge}</div>
       </div>
       ${statusBadge}
       <span class="log-delete" onclick="deleteEntry('${en.id}')">${icon('trash')}</span>
@@ -3009,12 +3089,14 @@ function renderDayDetail() {
       : '<span class="day-row-pending" title="Scheduled"></span>';
     // Name now derives from tags, so show notes (if any) in the meta row instead of tags
     const noteSnippet = en.notes ? en.notes.slice(0, 80) : '';
+    const milesBadge = en.miles ? `<span class="miles-badge">🏃 ${formatMiles(en.miles)} mi</span>` : '';
     html += `<div class="day-row">
       <span class="day-row-stripe" style="background:${color};"></span>
       <div class="day-row-body">
         <div class="day-row-title">
           ${time ? `<span class="day-row-time">${time}</span>` : ''}
           <span class="day-row-name">${escapeHtml(en.name)}</span>
+          ${milesBadge}
           ${status}
         </div>
         ${noteSnippet ? `<div class="day-row-meta">${escapeHtml(noteSnippet)}</div>` : ''}
@@ -3067,6 +3149,9 @@ function openLogModal(type, opts) {
   document.getElementById('log-date').value = initDate;
   document.getElementById('log-notes').value = '';
   document.getElementById('log-new-tag').value = '';
+  // Reset miles field — hidden until user picks a run tag
+  document.getElementById('log-miles').value = '';
+  document.getElementById('log-miles-group').style.display = 'none';
   // Default times: nearest hour for start, +60 min for end
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, '0');
@@ -3086,6 +3171,23 @@ function openLogModal(type, opts) {
   renderTagPicker('log-tag-list', type, state.selectedTags, toggleTag);
   document.getElementById('log-modal').classList.add('active');
 }
+
+// True if a tag should trigger the miles field. We're permissive — any tag
+// containing the word "run" (e.g. "outdoor run", "indoor run", "trail run",
+// "morning run") counts. We also include "hiking" since it's distance-y.
+function isRunTag(tag) {
+  if (!tag) return false;
+  const t = String(tag).toLowerCase();
+  return /\brun\b|running|hike|hiking/.test(t);
+}
+
+function syncMilesFieldVisibility() {
+  const group = document.getElementById('log-miles-group');
+  if (!group) return;
+  const tag = (state.selectedTags && state.selectedTags[0]) || '';
+  group.style.display = isRunTag(tag) ? '' : 'none';
+}
+
 // Single-select: tapping a tag replaces any current selection.
 // Tapping the same tag again does nothing — you can only swap.
 // Name field is read-only, so we always rewrite it from the selected tag.
@@ -3094,6 +3196,7 @@ function toggleTag(tag) {
   const nameInput = document.getElementById('log-name');
   if (nameInput) nameInput.value = capitalizeTag(tag);
   renderTagPicker('log-tag-list', state.currentLogType, state.selectedTags, toggleTag);
+  syncMilesFieldVisibility();
 }
 function addNewTag() {
   const inp = document.getElementById('log-new-tag');
@@ -3108,12 +3211,22 @@ function addNewTag() {
   if (nameInput) nameInput.value = capitalizeTag(val);
   inp.value = '';
   renderTagPicker('log-tag-list', state.currentLogType, state.selectedTags, toggleTag);
+  syncMilesFieldVisibility();
   save();
 }
 
 // Capitalize first letter of each word in a tag for prettier display.
 function capitalizeTag(tag) {
   return tag.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+// Pretty-print miles: 1 -> "1", 1.0 -> "1", 3.20 -> "3.2", 3.25 -> "3.25"
+function formatMiles(m) {
+  if (m == null || isNaN(m)) return '0';
+  const rounded = Math.round(m * 100) / 100;
+  if (Number.isInteger(rounded)) return String(rounded);
+  // Trim trailing zero from "3.20" → "3.2"
+  return String(rounded).replace(/0+$/, '').replace(/\.$/, '');
 }
 
 // ── Tag usage ──
@@ -3283,6 +3396,12 @@ function saveLog(ev) {
       completed: !!document.getElementById('log-completed').checked,
       notes: (document.getElementById('log-notes').value || '').trim(),
     };
+    // Miles: only stored if the tag warrants it AND a number was entered
+    const milesRaw = (document.getElementById('log-miles').value || '').trim();
+    if (milesRaw && isRunTag(entry.tags[0])) {
+      const miles = parseFloat(milesRaw);
+      if (!isNaN(miles) && miles > 0) entry.miles = miles;
+    }
     state.entries.push(entry);
     save();
     closeModal('log-modal');
@@ -3907,6 +4026,89 @@ function detectMilestones(justAddedEntry) {
     }
   }
 
+  // ── 🏃 RUN / MILES CELEBRATIONS ──
+  // Every run gets a playful per-run cheer based on the distance.
+  // The key uses the entry id so it only celebrates once per logged run
+  // (not every time you reopen the app).
+  if (justAddedEntry.completed && justAddedEntry.miles && justAddedEntry.miles > 0) {
+    const m = justAddedEntry.miles;
+    let title, sub;
+    if (m >= 26.2) {
+      title = '🏆 marathon distance!!';
+      sub = 'twenty-six-point-two miles. iconic.';
+    } else if (m >= 13.1) {
+      title = '💖 half marathon!';
+      sub = 'thirteen-point-one is no joke. legend.';
+    } else if (m >= 10) {
+      title = '🔥 double-digit miles!';
+      sub = m.toFixed(1) + ' miles. the GIRLS are GIRLING.';
+    } else if (m >= 6.2) {
+      title = '✨ slay queen 10K ✨';
+      sub = m.toFixed(1) + ' miles logged. mother is mothering.';
+    } else if (m >= 5) {
+      title = '🌟 five-plus miles!';
+      sub = m.toFixed(1) + ' miles — main character energy.';
+    } else if (m >= 3.1) {
+      title = '✨ slay queen 5K ✨';
+      sub = m.toFixed(1) + ' miles. iconique.';
+    } else if (m >= 3) {
+      title = '💕 three miles!';
+      sub = "didn't even break a sweat (lying)";
+    } else if (m >= 2) {
+      title = '🌸 two miles, look at you!';
+      sub = m.toFixed(1) + ' miles done and dusted.';
+    } else if (m >= 1) {
+      title = '💖 one mile!';
+      sub = "you're outside! you're moving! we love it!";
+    } else {
+      title = '✨ ' + m.toFixed(2) + ' mi logged!';
+      sub = 'every step counts.';
+    }
+    newOnes.push({
+      key: 'run-' + justAddedEntry.id,
+      title,
+      sub,
+    });
+
+    // ── Weekly mile thresholds ──
+    const milesWeekStart = startOfWeek(new Date());
+    const milesWeekEnd = new Date(milesWeekStart); milesWeekEnd.setDate(milesWeekEnd.getDate() + 7);
+    const thisWeekMiles = completedEntries
+      .filter(e => e.miles && inRange(e.date, milesWeekStart, milesWeekEnd))
+      .reduce((sum, e) => sum + (e.miles || 0), 0);
+
+    const weekKeyBase = milesWeekStart.toISOString().slice(0, 10);
+    const weekThresholds = [
+      { mi: 5,  title: '🌸 5 miles this week!',  sub: 'consistent and fabulous.' },
+      { mi: 10, title: '🔥 10 miles this week!', sub: 'olympics? we need to talk.' },
+      { mi: 20, title: '⭐ 20 miles this week!', sub: 'rare air. who is she.' },
+    ];
+    weekThresholds.forEach(t => {
+      const key = 'miles-week-' + t.mi + '-' + weekKeyBase;
+      if (thisWeekMiles >= t.mi && !celebratedMilestones.has(key)) {
+        newOnes.push({ key, title: t.title, sub: t.sub });
+      }
+    });
+
+    // ── Lifetime mile milestones (rarer, bigger) ──
+    const lifetimeMiles = completedEntries.reduce((sum, e) => sum + (e.miles || 0), 0);
+    const lifeThresholds = [
+      { mi: 25,  title: '🏃‍♀️ 25 lifetime miles!',  sub: 'a quarter of a hundred. milestone unlocked.' },
+      { mi: 50,  title: '💖 50 lifetime miles!',   sub: 'half a hundred miles. icon behavior.' },
+      { mi: 100, title: '🏆 100 lifetime miles!!', sub: 'TRIPLE digits. legendary.' },
+      { mi: 250, title: '⭐ 250 miles lifetime!',  sub: "you've literally run from city to city by now." },
+      { mi: 500, title: '🌟 500 lifetime miles!',  sub: 'half a thousand miles. send help (proud).' },
+    ];
+    lifeThresholds.forEach(t => {
+      if (lifetimeMiles >= t.mi) {
+        const key = 'miles-life-' + t.mi;
+        if (!celebratedMilestones.has(key)) {
+          newOnes.push({ key, title: t.title, sub: t.sub });
+        }
+      }
+    });
+  }
+
   // Filter out already-celebrated milestones
   return newOnes.filter(m => !celebratedMilestones.has(m.key));
 }
@@ -4123,7 +4325,7 @@ showWelcomeIfNeeded();
     <button type="button" class="add-btn" onclick="saveSettings()">Save</button>
 
     <div class="settings-divider"></div>
-    <div class="settings-meta">MyDanceFitness · made with 💖</div>
+    <div class="settings-meta">made with 💖 by SamPop</div>
   </div>
 </div>
 
