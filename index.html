@@ -163,82 +163,189 @@ body.dark .mode-lbl.on, body.light .mode-lbl.on { color: #fd7b77; }
   100% { transform: translate(var(--drift), -110vh) rotate(var(--rotation)) scale(0.8); opacity: 0; }
 }
 
-/* ─── WELCOME MODAL ─── */
-.welcome-overlay { backdrop-filter: blur(8px); }
-.welcome-modal {
+/* ─── ONBOARDING (2-screen hybrid) ─── */
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  z-index: 10000;
+  display: none;
+  overflow: hidden;
+}
+.onboarding-overlay.active { display: block; }
+body.light .onboarding-overlay { background: #fff; }
+
+.onboarding-screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
   text-align: center;
-  padding: 36px 28px 32px;
-  max-width: 320px;
-  border: 0.5px solid var(--accent-border);
-  background: linear-gradient(160deg, var(--card-bg) 0%, var(--accent-bg) 100%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
 }
-.welcome-sparkle {
+.onboarding-screen[data-active="true"] {
+  display: flex;
+  opacity: 1;
+}
+
+/* Subtle coral glow at top of dark screen */
+.onboarding-glow {
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(253, 123, 119, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(20px);
+}
+body.light .onboarding-glow { opacity: 0.6; }
+
+.onboarding-icon {
+  position: relative;
+  margin-bottom: 28px;
+  animation: onboard-icon-float 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 12px 30px rgba(253, 123, 119, 0.45));
+}
+@keyframes onboard-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.onboarding-brand {
+  font-family: 'Oswald', sans-serif;
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.onboarding-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: #cccccc;
+  margin-bottom: 60px;
+  letter-spacing: 0.01em;
+}
+body.light .onboarding-tagline { color: #888; }
+
+.onboarding-step {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #fd7b77;
+  margin-bottom: 28px;
+  font-weight: 500;
+}
+.onboarding-sparkle {
   font-size: 32px;
-  margin-bottom: 14px;
-  animation: welcome-pulse 2.5s ease-in-out infinite;
+  margin-bottom: 18px;
+  animation: onboard-sparkle 2.5s ease-in-out infinite;
 }
-@keyframes welcome-pulse {
+@keyframes onboard-sparkle {
   0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
   50%      { transform: scale(1.15) rotate(8deg); opacity: 1; }
 }
-.welcome-greeting {
+.onboarding-greeting {
   font-family: 'Oswald', sans-serif;
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  color: var(--text-primary);
+  font-size: 26px;
+  font-weight: 500;
+  color: #fff;
   margin-bottom: 4px;
 }
-.welcome-question {
+body.light .onboarding-greeting { color: #1a0a0a; }
+.onboarding-question {
   font-family: 'Oswald', sans-serif;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 300;
-  color: var(--text-secondary);
-  margin-bottom: 22px;
+  color: #cccccc;
+  margin-bottom: 32px;
   font-style: italic;
 }
-.welcome-input {
+body.light .onboarding-question { color: #777; }
+
+.onboarding-input {
   width: 100%;
-  background: var(--input-bg);
-  border: 0.5px solid var(--accent-border);
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #fd7b77;
   border-radius: 14px;
-  padding: 14px 18px;
-  font-size: 15px;
+  padding: 16px 20px;
+  font-size: 16px;
   font-family: 'Inter', sans-serif;
-  color: var(--text-primary);
+  color: #fff;
   outline: none;
   text-align: center;
-  margin-bottom: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 24px;
+  transition: box-shadow 0.2s, background 0.2s;
 }
-.welcome-input:focus {
-  border-color: #fd7b77;
-  box-shadow: 0 0 0 3px #fd7b7722;
+.onboarding-input:focus {
+  box-shadow: 0 0 0 3px rgba(253, 123, 119, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
-.welcome-btn {
+body.light .onboarding-input { background: rgba(0, 0, 0, 0.04); color: #1a0a0a; }
+body.light .onboarding-input:focus { background: rgba(253, 123, 119, 0.05); }
+
+.onboarding-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #aaa;
+  font-weight: 500;
+}
+body.light .onboarding-toggle-row { color: #888; }
+
+.onboarding-btn {
   display: block;
   width: 100%;
+  max-width: 320px;
   background: linear-gradient(135deg, #fd7b77, #ee9690);
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 14px;
+  padding: 18px;
+  border-radius: 16px;
   font-family: 'Oswald', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.2s;
-  box-shadow: 0 6px 18px rgba(253, 123, 119, 0.3);
+  box-shadow: 0 8px 24px rgba(253, 123, 119, 0.4);
 }
-.welcome-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(253, 123, 119, 0.4); }
-.welcome-btn:active { transform: translateY(0); }
-.welcome-footnote {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 14px;
+.onboarding-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(253, 123, 119, 0.5); }
+.onboarding-btn:active { transform: translateY(0); }
+
+.onboarding-footnote {
+  font-size: 11px;
+  color: #777;
+  margin-top: 18px;
   font-style: italic;
+}
+body.light .onboarding-footnote { color: #aaa; }
+
+/* SamPop credit at the very bottom of welcome screen */
+.onboarding-credit {
+  position: absolute;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #fd7b77;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
 }
 
 /* ─── SETTINGS MODAL ─── */
@@ -4187,17 +4294,16 @@ attachTrendScrub();
 // ══════════════════════════════════════════════
 //  WELCOME MODAL — first-time setup
 // ══════════════════════════════════════════════
-function showWelcomeIfNeeded() {
+function showOnboardingIfNeeded() {
   const name = getUserName();
   if (!name) {
-    const modal = document.getElementById('welcome-modal');
-    if (modal) {
-      modal.classList.add('active');
-      // Focus the input so they can start typing immediately
-      setTimeout(() => {
-        const inp = document.getElementById('welcome-name-input');
-        if (inp) inp.focus();
-      }, 200);
+    const overlay = document.getElementById('onboarding');
+    if (overlay) {
+      overlay.classList.add('active');
+      // Make sure we start at screen 1
+      document.querySelectorAll('.onboarding-screen').forEach(s => s.removeAttribute('data-active'));
+      const s1 = document.getElementById('onboarding-1');
+      if (s1) s1.setAttribute('data-active', 'true');
     }
   } else {
     // Refresh greeting in case the name was updated
@@ -4205,24 +4311,52 @@ function showWelcomeIfNeeded() {
   }
 }
 
-function completeWelcome() {
-  const inp = document.getElementById('welcome-name-input');
+// Move from screen 1 → screen 2 (or any specific step)
+function advanceOnboarding(toStep) {
+  document.querySelectorAll('.onboarding-screen').forEach(s => s.removeAttribute('data-active'));
+  const target = document.getElementById('onboarding-' + toStep);
+  if (target) {
+    target.setAttribute('data-active', 'true');
+    // Auto-focus the name field on screen 2
+    if (toStep === 2) {
+      setTimeout(() => {
+        const inp = document.getElementById('onboarding-name');
+        if (inp) inp.focus();
+      }, 300);
+    }
+  }
+}
+
+// Save onboarding inputs and dismiss the overlay into the app
+function finishOnboarding() {
+  const inp = document.getElementById('onboarding-name');
   const val = (inp.value || '').trim();
   if (!val) {
-    inp.style.borderColor = '#fd7b77';
     inp.placeholder = 'we need a name 💖';
     inp.focus();
     return;
   }
   setUserName(val);
-  closeModal('welcome-modal');
+  // Save sound preference from the toggle
+  const soundCheckbox = document.getElementById('onboarding-sound');
+  if (soundCheckbox) {
+    soundEnabled = soundCheckbox.checked;
+    try { localStorage.setItem('mydancefitness_sound', soundEnabled ? 'on' : 'off'); } catch (e) {}
+  }
+  // Dismiss the onboarding overlay
+  const overlay = document.getElementById('onboarding');
+  if (overlay) overlay.classList.remove('active');
   refreshGreeting();
-  // A small celebration to welcome them in
+  // Welcome celebration
   setTimeout(() => {
     showToast('Welcome, ' + val + ' 💖');
     launchConfetti();
-  }, 200);
+  }, 350);
 }
+
+// Backwards-compat shim — keeps any old code that might still call the old name
+function showWelcomeIfNeeded() { return showOnboardingIfNeeded(); }
+function completeWelcome() { return finishOnboarding(); }
 
 function refreshGreeting() {
   // Re-run gotoPage on whatever's currently active to refresh the greeting text
@@ -4259,15 +4393,6 @@ function saveSettings() {
 }
 
 // Show welcome on page load if no name set yet
-
-// ── PWA: register service worker ──
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(reg => console.log('SW registered'))
-      .catch(err => console.log('SW failed:', err));
-  });
-}
 showWelcomeIfNeeded();
 </script>
 
@@ -4280,23 +4405,56 @@ showWelcomeIfNeeded();
 <!-- Confetti overlay (particles inserted here at runtime) -->
 <div class="confetti-container" id="confetti-container"></div>
 
-<!-- ═══ WELCOME MODAL — first-time setup ═══ -->
-<div class="modal-overlay welcome-overlay" id="welcome-modal">
-  <div class="modal welcome-modal">
-    <div class="welcome-sparkle">✨</div>
-    <div class="welcome-greeting">hey cutie,</div>
-    <div class="welcome-question">what should I call you?</div>
+<!-- ═══ ONBOARDING — 2-screen hybrid (splash → name + sound) ═══ -->
+<div class="onboarding-overlay" id="onboarding">
+  <!-- Screen 1: welcome splash -->
+  <div class="onboarding-screen" id="onboarding-1" data-active="true">
+    <div class="onboarding-glow"></div>
+    <div class="onboarding-icon">
+      <svg viewBox="0 0 100 100" width="140" height="140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="100" height="100" rx="22" fill="#ffffff"/>
+        <g fill="#fd7b77">
+          <rect x="14" y="35" width="14" height="30" rx="4"/>
+          <rect x="72" y="35" width="14" height="30" rx="4"/>
+          <rect x="28" y="40" width="8" height="20" rx="2"/>
+          <rect x="64" y="40" width="8" height="20" rx="2"/>
+          <rect x="36" y="46" width="28" height="8" rx="3"/>
+        </g>
+      </svg>
+    </div>
+    <div class="onboarding-brand">
+      <span class="brand-my">My</span><span class="brand-dance">Dance</span><span class="brand-fitness">Fitness</span>
+    </div>
+    <div class="onboarding-tagline">dance, fitness, and flexibility tracking</div>
+    <button type="button" class="onboarding-btn" onclick="advanceOnboarding(2)">join the era →</button>
+    <div class="onboarding-footnote">no app store needed</div>
+    <div class="onboarding-credit">made with 💖 by SamPop</div>
+  </div>
+
+  <!-- Screen 2: name + sound -->
+  <div class="onboarding-screen" id="onboarding-2">
+    <div class="onboarding-step">✦ Let's set you up ✦</div>
+    <div class="onboarding-sparkle">✨</div>
+    <div class="onboarding-greeting">hey cutie,</div>
+    <div class="onboarding-question">what should I call you?</div>
     <input
-      class="welcome-input"
-      id="welcome-name-input"
+      class="onboarding-input"
+      id="onboarding-name"
       type="text"
       placeholder="your name"
       autocomplete="given-name"
       maxlength="24"
-      onkeydown="if(event.key==='Enter'){event.preventDefault();completeWelcome();}"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();finishOnboarding();}"
     />
-    <button type="button" class="welcome-btn" onclick="completeWelcome()">Let's go →</button>
-    <div class="welcome-footnote">you can change this anytime in settings</div>
+    <div class="onboarding-toggle-row">
+      <span class="onboarding-toggle-label">Celebration sounds</span>
+      <label class="settings-toggle">
+        <input type="checkbox" id="onboarding-sound" checked />
+        <span class="settings-toggle-slider"></span>
+      </label>
+    </div>
+    <button type="button" class="onboarding-btn" onclick="finishOnboarding()">start tracking →</button>
+    <div class="onboarding-footnote">you can change anything in settings</div>
   </div>
 </div>
 
