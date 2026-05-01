@@ -158,7 +158,8 @@ body.dark .mode-lbl.on, body.light .mode-lbl.on { color: #fd7b77; }
 }
 @keyframes confetti-float {
   0%   { transform: translate(0, 0) rotate(0deg) scale(0.5); opacity: 0; }
-  10%  { opacity: 1; transform: translate(0, -20vh) rotate(20deg) scale(1); }
+  8%   { opacity: 1; transform: translate(0, -10vh) rotate(15deg) scale(1); }
+  85%  { opacity: 1; }
   100% { transform: translate(var(--drift), -110vh) rotate(var(--rotation)) scale(0.8); opacity: 0; }
 }
 
@@ -4133,24 +4134,25 @@ function showMilestoneBanner(title, sub) {
   document.getElementById('milestone-banner-sub').textContent = sub || '';
   banner.classList.add('show');
   clearTimeout(banner._hideTimer);
-  banner._hideTimer = setTimeout(() => banner.classList.remove('show'), 3200);
+  banner._hideTimer = setTimeout(() => banner.classList.remove('show'), 5000);
 }
 
 function launchConfetti() {
   const container = document.getElementById('confetti-container');
   if (!container) return;
   const particles = ['❤️', '💖', '💕', '✨', '✨', '🌸', '❤️', '✨'];
-  const count = 28;
+  const count = 36;  // a few more particles for fullness
   for (let i = 0; i < count; i++) {
     const el = document.createElement('div');
     el.className = 'confetti-particle';
     el.textContent = particles[Math.floor(Math.random() * particles.length)];
-    // Random horizontal start, drift, rotation, duration
+    // Random horizontal start, drift, rotation, duration — longer float so you
+    // can actually enjoy them
     const startX = Math.random() * 100;
     const drift = (Math.random() - 0.5) * 200;  // -100 to 100 px sideways drift
     const rotation = (Math.random() - 0.5) * 720;
-    const duration = 2 + Math.random() * 1.5;   // 2-3.5 seconds
-    const delay = Math.random() * 0.4;          // staggered starts
+    const duration = 4 + Math.random() * 2.5;   // 4-6.5 seconds (was 2-3.5)
+    const delay = Math.random() * 1.2;          // staggered up to 1.2s (was 0.4)
     const size = 18 + Math.random() * 14;       // 18-32px
     el.style.left = startX + '%';
     el.style.bottom = '-40px';
@@ -4160,7 +4162,7 @@ function launchConfetti() {
     el.style.animation = 'confetti-float ' + duration + 's ease-out ' + delay + 's forwards';
     container.appendChild(el);
     // Clean up after animation
-    setTimeout(() => el.remove(), (duration + delay + 0.2) * 1000);
+    setTimeout(() => el.remove(), (duration + delay + 0.3) * 1000);
   }
 }
 
