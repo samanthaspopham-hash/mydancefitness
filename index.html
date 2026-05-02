@@ -443,6 +443,60 @@ body.light .onboarding-footnote { color: #aaa; }
 }
 .streak-pill.streak-zero .streak-num { color: var(--text-muted); }
 
+/* ─── UP NEXT PILL ─── tap to jump to calendar */
+.up-next-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px 12px 14px;
+  margin-bottom: 12px;
+  background: var(--accent-bg);
+  border: 0.5px solid var(--accent-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.3s, border-color 0.3s;
+  position: relative;
+}
+.up-next-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(253, 123, 119, 0.15);
+}
+.up-next-pill:active { transform: translateY(0); }
+.up-next-stripe {
+  width: 3px;
+  align-self: stretch;
+  background: #fd7b77;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.up-next-body { flex: 1; min-width: 0; }
+.up-next-kicker {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fd7b77;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.up-next-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.up-next-when {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: #ee9690;
+  text-align: right;
+  flex-shrink: 0;
+}
+
 /* ─── WEEKLY RECAP CARD ─── */
 .recap-card {
   position: relative;
@@ -610,6 +664,31 @@ body.light .toggle-thumb { left: 23px; }
 .empty-state { text-align: center; padding: 24px 10px; color: var(--text-muted); font-size: 12px; transition: color 0.3s; }
 .empty-state .empty-icon { display: flex; justify-content: center; margin-bottom: 8px; color: #fd7b77; opacity: 0.55; }
 .empty-state .empty-icon .icon { width: 28px; height: 28px; }
+
+/* Upcoming empty state — soft and inviting */
+.upcoming-empty {
+  text-align: center;
+  padding: 30px 16px 24px;
+}
+.upcoming-empty-icon {
+  font-size: 28px;
+  color: var(--accent);
+  opacity: 0.65;
+  margin-bottom: 10px;
+}
+.upcoming-empty-main {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.upcoming-empty-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
 
 /* Log items */
 .log-item { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 0.5px solid var(--card-inner-border); transition: border-color 0.3s; }
@@ -1549,6 +1628,16 @@ body.light .toggle-thumb { left: 23px; }
       <!-- Streak pill (soft, no pressure) -->
       <div class="streak-pill" id="streak-pill" style="display:none;"></div>
 
+      <!-- Up Next pill — only shows when something is scheduled -->
+      <div class="up-next-pill" id="up-next-pill" style="display:none;" onclick="gotoPage('calendar')">
+        <span class="up-next-stripe"></span>
+        <div class="up-next-body">
+          <div class="up-next-kicker">Up next</div>
+          <div class="up-next-name" id="up-next-name">—</div>
+        </div>
+        <div class="up-next-when" id="up-next-when">—</div>
+      </div>
+
       <!-- Weekly recap card (Mondays only, dismissable) -->
       <div class="recap-card" id="recap-card" style="display:none;">
         <button class="recap-close" id="recap-close" aria-label="Dismiss">×</button>
@@ -1626,9 +1715,9 @@ body.light .toggle-thumb { left: 23px; }
             <div class="stat-sub" id="stat-stretch-cmp">flexibility + splits</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label">Treats</div>
-            <div class="stat-val" id="stat-splurge">0</div>
-            <div class="stat-sub" id="stat-splurge-cmp">splurges + eating out</div>
+            <div class="stat-label">Runs</div>
+            <div class="stat-val" id="stat-runs">0</div>
+            <div class="stat-sub" id="stat-runs-cmp">no runs logged</div>
           </div>
         </div>
         <!-- Miles line — quietly tucked under the stat grid; only shows if there are miles -->
@@ -2663,6 +2752,35 @@ function renderStreakPill() {
 }
 
 // ══════════════════════════════════════════════
+//  UP NEXT PILL (home page; hides when nothing scheduled)
+// ══════════════════════════════════════════════
+function renderUpNext() {
+  const pill = document.getElementById('up-next-pill');
+  if (!pill) return;
+  const today = todayStr();
+  // Find the next scheduled (incomplete) entry. Includes today if not yet completed.
+  const nextEntry = state.entries
+    .filter(en => en.date > today || (en.date === today && !en.completed))
+    .sort((a, b) => (a.date + (a.startTime || '23:59')).localeCompare(b.date + (b.startTime || '23:59')))[0];
+
+  if (!nextEntry) {
+    // No upcoming sessions — keep this whole pill hidden, matches our soft-girl "no clutter" aesthetic
+    pill.style.display = 'none';
+    return;
+  }
+
+  pill.style.display = '';
+  document.getElementById('up-next-name').textContent = nextEntry.name;
+
+  // Format the "when" — show relative day + time if available
+  // e.g. "Tomorrow · 9:00 AM" or "Today · 7:00 AM" or "Mon May 4 · 6:30 PM"
+  const whenLabel = relativeDate(nextEntry.date);
+  const timeLabel = nextEntry.startTime ? fmtTime(nextEntry.startTime) : '';
+  const combined = timeLabel ? `${whenLabel} · ${timeLabel}` : whenLabel;
+  document.getElementById('up-next-when').textContent = combined;
+}
+
+// ══════════════════════════════════════════════
 //  WEEKLY RECAP CARD (Mondays only)
 // ══════════════════════════════════════════════
 function renderWeeklyRecap() {
@@ -2747,6 +2865,7 @@ function renderWeeklyRecap() {
 function renderHome() {
   // Render streak pill + weekly recap card (the new gamification touches)
   renderStreakPill();
+  renderUpNext();
   renderWeeklyRecap();
 
   // Quote
@@ -2786,6 +2905,14 @@ function renderHome() {
   const stretch = countBy(thisDone, 'stretch');
   const splurge = thisTreats.length;
 
+  // ── Runs count: any completed entry whose tag matches the run-detection rule ──
+  // Counts outdoor/indoor/morning/trail/etc runs + hikes as "runs"
+  const runEntriesThis = thisDone.filter(e => e.tags && e.tags.length && isRunTag(e.tags[0]));
+  const runEntriesPrev = prevDone.filter(e => e.tags && e.tags.length && isRunTag(e.tags[0]));
+  const runs = runEntriesThis.length;
+  const runsLast = runEntriesPrev.length;
+  const milesThisPeriod = runEntriesThis.reduce((sum, e) => sum + (e.miles || 0), 0);
+
   const danceLast = countBy(prevDone, 'dance');
   const workoutLast = countBy(prevDone, 'workout');
   const stretchLast = countBy(prevDone, 'stretch');
@@ -2794,7 +2921,7 @@ function renderHome() {
   document.getElementById('stat-dance').textContent = dance;
   document.getElementById('stat-workout').textContent = workout;
   document.getElementById('stat-stretch').textContent = stretch;
-  document.getElementById('stat-splurge').textContent = splurge;
+  document.getElementById('stat-runs').textContent = runs;
 
   // Comparison line varies by period — only "vs prior" makes sense for ALL
   const cmpSuffix = state.trendPeriod === 'ALL' ? '' : 'vs prior ' + range.unit;
@@ -2814,24 +2941,24 @@ function renderHome() {
   document.getElementById('stat-dance-cmp').textContent = fmtCmp(dance, danceLast, 'class');
   document.getElementById('stat-workout-cmp').textContent = fmtCmp(workout, workoutLast, 'workout');
   document.getElementById('stat-stretch-cmp').textContent = fmtCmp(stretch, stretchLast, 'stretch');
-  document.getElementById('stat-splurge-cmp').textContent =
-    state.trendPeriod === 'ALL'
-      ? (splurge === 0 ? 'no treats yet' : 'lifetime treats')
-      : (splurge === 0 ? 'no treats logged'
-        : splurgeLast === 0 ? 'first one in ' + range.unit
-        : (splurge > splurgeLast ? '+' : '') + (splurge - splurgeLast) + ' ' + cmpSuffix);
 
-  // Miles total for the current period — only show the line if there are any
-  const milesTotal = thisDone.reduce((sum, e) => sum + (e.miles || 0), 0);
-  const milesLine = document.getElementById('miles-line');
-  if (milesLine) {
-    if (milesTotal > 0) {
-      milesLine.style.display = '';
-      document.getElementById('miles-line-value').textContent = formatMiles(milesTotal) + ' mi';
-    } else {
-      milesLine.style.display = 'none';
-    }
+  // Runs subtitle: prioritize MILES if any, else show the run-count comparison
+  const runsCmpEl = document.getElementById('stat-runs-cmp');
+  if (runs === 0) {
+    runsCmpEl.textContent = state.trendPeriod === 'ALL' ? 'no runs yet' : 'no runs logged';
+  } else if (milesThisPeriod > 0) {
+    // Lead with miles since it's the most meaningful run metric
+    const milesStr = formatMiles(milesThisPeriod);
+    runsCmpEl.textContent = milesStr + ' mi total';
+  } else {
+    // Runs logged but no distance recorded
+    runsCmpEl.textContent = fmtCmp(runs, runsLast, 'run');
   }
+
+  // Miles total for the current period — kept for backwards-compat but hidden
+  // since Runs tile now leads with miles in its subtitle. Set to none.
+  const milesLine = document.getElementById('miles-line');
+  if (milesLine) milesLine.style.display = 'none';
 
   // Highlight
   const highlight = pickHighlight(thisDone, prevDone, dance, danceLast, splurge, range);
@@ -3117,7 +3244,11 @@ function renderUpcoming() {
     .sort((a, b) => (a.date + (a.startTime || '')).localeCompare(b.date + (b.startTime || '')))
     .slice(0, 10);
   if (upcoming.length === 0) {
-    wrap.innerHTML = '<div class="empty-state" style="padding:12px;">Nothing scheduled.<br>Log a future class below.</div>';
+    wrap.innerHTML = `<div class="upcoming-empty">
+      <div class="upcoming-empty-icon">✦</div>
+      <div class="upcoming-empty-main">Nothing scheduled yet</div>
+      <div class="upcoming-empty-sub">Sessions you plan ahead will appear here</div>
+    </div>`;
     return;
   }
   wrap.innerHTML = upcoming.map(en => {
